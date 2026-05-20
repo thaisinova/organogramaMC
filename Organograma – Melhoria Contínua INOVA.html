@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Organograma – Melhoria Contínua INOVA</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #d8d8d8;
+      overflow: hidden;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+    .controls {
+      position: fixed; top: 8px; right: 10px; z-index: 1000;
+      display: flex; gap: 6px;
+    }
+    .controls button {
+      background: rgba(255,255,255,0.95); border: 1px solid #ccc;
+      border-radius: 4px; padding: 5px 11px; font-size: 11px;
+      cursor: pointer; font-family: inherit; color: #333;
+    }
+    .controls button:hover { border-color: #C8102E; color: #C8102E; }
+    .slide-wrap {
+      display: flex; align-items: flex-start; justify-content: center;
+      padding-top: 10px;
+    }
+    .slide {
+      width: 1280px; height: 720px;
+      background: white; transform-origin: top left;
+      overflow: hidden; display: flex; flex-direction: column;
+      padding: 10px 14px 6px; gap: 0;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+    }
+    /* HEADER */
+    .header {
+      display: flex; align-items: center;
+      border-bottom: 2px solid #C8102E;
+      padding-bottom: 7px; margin-bottom: 5px; flex-shrink: 0;
+    }
+    .logo-img { height: 36px; margin-right: 14px; }
+    .header-title {
+      font-size: 15px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.5px; color: #1a1a1a;
+    }
+    .prog-tags { display: flex; gap: 5px; margin-top: 3px; }
+    .prog-tag {
+      font-size: 8.5px; padding: 1px 8px;
+      border-radius: 10px; font-weight: 700;
+    }
+    .prog-active { background: #C8102E; color: white; }
+    .prog-future { background: #e8e8e8; color: #aaa; }
+    .header-sub {
+      margin-left: auto; font-size: 8.5px;
+      color: #bbb; text-align: right; line-height: 1.5;
+    }
+    /* HIERARCHY */
+    .hierarchy {
+      display: flex; flex-direction: column;
+      align-items: center; flex-shrink: 0; gap: 0;
+    }
+    .vline { width: 1.5px; height: 7px; background: #ccc; }
+    /* Base card */
+    .hcard {
+      background: white; border-radius: 5px;
+      padding: 4px 12px; text-align: center;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.12);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .hcard .badge {
+      font-size: 7px; text-transform: uppercase; letter-spacing: 0.8px;
+      font-weight: 700; padding: 1px 7px; border-radius: 8px;
+      margin-bottom: 2px; white-space: nowrap;
+    }
+    .hcard .name { font-size: 11px; font-weight: 700; color: #1a1a1a; }
+    .hcard .dept { font-size: 8.5px; color: #999; margin-top: 1px; }
+    /* Sponsor */
+    .hcard-sponsor { border-top: 3px solid #7B0020; min-width: 155px; }
+    .hcard-sponsor .badge { background: #7B0020; color: white; }
+    /* Committee */
+    .committee-block { width: 100%; }
+    .committee-label {
+      text-align: center; margin-bottom: 3px;
+      font-size: 8px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: #C8102E;
+    }
+    .committee-row {
+      display: flex; justify-content: center;
+      gap: 5px; flex-wrap: nowrap;
+    }
+    .hcard-committee {
+      border-top: 3px solid #C8102E;
+      min-width: 0; flex: 1; max-width: 175px;
+    }
+    .hcard-committee .badge { background: #C8102E; color: white; }
+    /* Manager */
+    .hcard-manager { border-top: 3px solid #E07030; min-width: 190px; }
+    .hcard-manager .badge { background: #E07030; color: white; }
+    /* Secretary */
+    .hcard-secretary { border-top: 3px solid #D4A800; min-width: 190px; }
+    .hcard-secretary .badge { background: #D4A800; color: white; }
+    /* AREAS */
+    .areas-section {
+      flex: 1; min-height: 0;
+      display: flex; flex-direction: column;
+    }
+    .areas-label {
+      text-align: center; font-size: 8px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: #1A5F9E; margin: 4px 0 3px; flex-shrink: 0;
+    }
+    .areas-grid {
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      gap: 4px; flex: 1; min-height: 0;
+    }
+    .acard {
+      background: white; border-radius: 4px; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-left: 3px solid #1A5F9E;
+      display: flex; flex-direction: column;
+    }
+    .acard-header {
+      background: #1A5F9E; color: white;
+      padding: 3px 5px; font-size: 8px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.4px;
+      flex-shrink: 0; line-height: 1.2;
+    }
+    .acard-body {
+      padding: 3px 5px; flex: 1;
+      display: flex; flex-direction: column; justify-content: space-evenly;
+    }
+    .rl { font-size: 6.5px; text-transform: uppercase; letter-spacing: 0.7px; color: #bbb; font-weight: 700; line-height: 1; }
+    .rn { font-size: 9px; color: #222; font-weight: 600; line-height: 1.25; }
+    .rn.vazio { color: #C8A000; font-style: italic; font-weight: 400; font-size: 8.5px; }
+    .rn .note { font-size: 7.5px; color: #C8102E; font-weight: 400; }
+    .ds { height: 1px; background: #f0f0f0; margin: 2px 0; }
+    /* Delete button */
+    .del-btn {
+      position: absolute; top: 2px; right: 2px;
+      width: 14px; height: 14px;
+      background: #C8102E; color: white;
+      border: none; border-radius: 50%;
+      font-size: 9px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1; padding: 0; z-index: 10; font-family: inherit;
+    }
+    .hcard { position: relative; }
+    .acard { position: relative; }
+    /* Add placeholder card */
+    .add-area-btn {
+      border: 2px dashed #1A5F9E !important; background: white;
+      color: #1A5F9E; cursor: pointer; font-size: 22px;
+      min-height: 40px; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .add-committee-btn {
+      border: 2px dashed #C8102E !important; background: white !important;
+      color: #C8102E !important; cursor: pointer; font-size: 22px;
+      box-shadow: none !important;
+    }
+    /* FOOTER */
+    .footer {
+      text-align: center; font-size: 8px; color: #ccc;
+      padding-top: 3px; border-top: 1px solid #f0f0f0;
+      flex-shrink: 0; margin-top: 3px;
+    }
+    /* LEGEND */
+    .legend {
+      display: flex; gap: 14px; justify-content: center;
+      flex-shrink: 0; margin: 3px 0 2px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 8px; color: #888; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    /* Edit highlight */
+    .editing [contenteditable]:focus {
+      outline: 1px dashed #C8102E; background: #fff8f8; border-radius: 2px;
+    }
+    @media print {
+      html, body { overflow: visible; background: white; }
+      .controls { display: none; }
+      .slide { box-shadow: none; transform: none !important; margin-left: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="controls" id="controls">
+  <button onclick="toggleEdit()" id="btnEdit">✎ Modo Edição</button>
+  <button onclick="salvar()" id="btnSave" style="display:none">💾 Salvar Alterações</button>
+  <button onclick="window.print()">🖨 Imprimir / PDF</button>
+</div>
+
+<div class="slide-wrap">
+<div class="slide" id="slide">
+
+  <!-- HEADER -->
+  <div class="header">
+    <img class="logo-img" src="data:image/png;base64,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" alt="INOVA">
+    <div>
+      <div class="header-title">Melhoria Contínua</div>
+      <div class="prog-tags">
+        <span class="prog-tag prog-active">5S</span>
+        <span class="prog-tag prog-future">Kaizen (em implementação)</span>
+        <span class="prog-tag prog-future">Shop Floor (em implementação)</span>
+      </div>
+    </div>
+    <div class="header-sub">Organograma de Papéis e Responsabilidades</div>
+  </div>
+
+  <!-- HIERARCHY -->
+  <div class="hierarchy">
+
+    <div class="hcard hcard-sponsor">
+      <div class="badge">Patrocinadora</div>
+      <div class="name">Thiane Suzin</div>
+      <div class="dept">Diretoria</div>
+    </div>
+    <div class="vline"></div>
+
+    <div class="committee-block" style="width:100%">
+      <div class="committee-label">Comitê de Melhoria Contínua</div>
+      <div class="committee-row">
+        <div class="hcard hcard-committee">
+          <div class="badge">Comitê</div>
+          <div class="name">Daltro Gomes</div>
+          <div class="dept">Gerente Industrial</div>
+        </div>
+        <div class="hcard hcard-committee">
+          <div class="badge">Comitê</div>
+          <div class="name">Leonardo Cogo dos Santos</div>
+          <div class="dept">Gerente P&amp;D e TI</div>
+        </div>
+        <div class="hcard hcard-committee">
+          <div class="badge">Comitê</div>
+          <div class="name">Gustavo Karlinski</div>
+          <div class="dept">Supervisor da Qualidade</div>
+        </div>
+        <div class="hcard hcard-committee">
+          <div class="badge">Comitê</div>
+          <div class="name">Géverton Borges</div>
+          <div class="dept">Supervisor Métodos e Proc.</div>
+        </div>
+        <div class="hcard hcard-committee">
+          <div class="badge">Comitê</div>
+          <div class="name">Gabriel Birck</div>
+          <div class="dept">Planejamento Estratégico</div>
+        </div>
+        <div class="hcard hcard-committee">
+          <div class="badge">Comitê</div>
+          <div class="name">Matheus dos Santos</div>
+          <div class="dept">Treinamento e Desenvolvimento</div>
+        </div>
+      </div>
+    </div>
+    <div class="vline"></div>
+
+    <div class="hcard hcard-manager">
+      <div class="badge">Gestora do Programa</div>
+      <div class="name">Thais de Castilhos</div>
+      <div class="dept">Analista de Melhoria Contínua</div>
+    </div>
+    <div class="vline"></div>
+
+    <div class="hcard hcard-secretary">
+      <div class="badge">Secretária do Time</div>
+      <div class="name">Laiza Gonçalves</div>
+      <div class="dept">Analista de Métodos e Processos</div>
+    </div>
+
+  </div><!-- /hierarchy -->
+
+  <!-- AREAS -->
+  <div class="vline"></div>
+  <div class="areas-section">
+    <div class="areas-label">Facilitadores e Auditores por Área</div>
+    <div class="areas-grid">
+
+      <div class="acard">
+        <div class="acard-header">P&amp;D – HIT</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Leonardo Moro</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditores</div><div class="rn">Alexandre S. de Avila</div><div class="rn">Alexandre Vivan</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">P&amp;D – RAID</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">William Furlaneto</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn">Felipe M. Barcellos</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">P&amp;D – Software</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Willian Steffler</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn">Lucas Carnizella</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">P&amp;D – Industrial</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Anderson Bremm</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditores</div><div class="rn">Gabriel Dedea</div><div class="rn">Márcio P. Barros</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">P&amp;D – Documentação</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Leonardo C. dos Santos <span class="note">(Comitê)</span></div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn vazio">Sem auditor</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">Assistência Técnica</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Djordan Sievers</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn">Aloísio V. Arrial</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">Chicote</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Rodrigo Silva</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn">Ana C. Adamatti</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">Logística</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Josiele Porto</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditores</div><div class="rn">Cristhian A. Pedroni</div><div class="rn">Renata dos Santos</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">Usinagem</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Rodrigo Silva</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn">Cristiano S. Gubert</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">MTA – Itinerário</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Rodrigo Silva</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn">Henrique Adamatti</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">MTA – Industrial</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Adolar C. Ceratti</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn">Tamara R. Kuchnir</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">MTA – Resfriar</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Rodrigo Silva</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn vazio">Sem auditor</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">PPCPM</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Gabriel Perotti</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn">Jeferson Kessler</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">Métodos e Processos</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Géverton Borges <span class="note">(Comitê)</span></div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditores</div><div class="rn">Nathan M. Padilha</div><div class="rn">Laiza Gonçalves <span class="note">(Secretária)</span></div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">Qualidade e MA</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Gustavo Karlinski <span class="note">(Comitê)</span></div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn">Maiara V. Saretto</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">Manutenção</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Daltro Gomes <span class="note">(Comitê)</span></div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn">Marcelo H. Sgarbi</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">TI</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Andrigo Anderle</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn">Gustavo Pauletti</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">Controladoria</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Raquel Zimmermann</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn vazio">Sem auditor</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">RH</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Marcia Gressler</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn vazio">Sem auditor</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">Comercial</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Rudinei Zimmermann</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn vazio">Sem auditor</div></div>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-header">Montagem de Placas</div>
+        <div class="acard-body">
+          <div><div class="rl">Facilitador</div><div class="rn">Jeferson Salvador</div></div>
+          <div class="ds"></div>
+          <div><div class="rl">Auditor</div><div class="rn vazio">Sem auditor</div></div>
+        </div>
+      </div>
+
+    </div><!-- /areas-grid -->
+  </div><!-- /areas-section -->
+
+  <!-- LEGEND + FOOTER -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#1A5F9E"></div>Área com facilitador e auditor</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#C8A000"></div>Auditor a recrutar</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#C8102E"></div>Acumula papel no Comitê ou Time</div>
+  </div>
+
+  <div class="footer">
+    INOVA Sistemas Eletrônicos &nbsp;|&nbsp; Melhoria Contínua &nbsp;|&nbsp; Elaboração: Thais de Castilhos &nbsp;|&nbsp;
+    <span id="footer-version">Versão 1.0 &ndash; Maio/2026</span>
+  </div>
+
+</div><!-- /slide -->
+</div><!-- /slide-wrap -->
+
+<script>
+  function scaleSlide() {
+    const slide = document.getElementById("slide");
+    const pad = 16;
+    const sx = (window.innerWidth - pad * 2) / 1280;
+    const sy = (window.innerHeight - pad * 2) / 720;
+    const scale = Math.min(sx, sy);
+    slide.style.transform = "scale(" + scale + ")";
+    const wrap = document.querySelector(".slide-wrap");
+    wrap.style.height = (720 * scale + pad) + "px";
+    slide.style.marginLeft = Math.max(0, (window.innerWidth - 1280 * scale) / 2) + "px";
+  }
+  window.addEventListener("resize", scaleSlide);
+  scaleSlide();
+
+  /* ---- modo edição ---- */
+  var editMode = false;
+
+  function toggleEdit() {
+    editMode = !editMode;
+    var slide = document.getElementById("slide");
+    var btn   = document.getElementById("btnEdit");
+    var btnSave = document.getElementById("btnSave");
+
+    if (editMode) {
+      slide.classList.add("editing");
+      btn.textContent = "✕ Cancelar Edição";
+      btn.style.borderColor = "#C8102E";
+      btn.style.color = "#C8102E";
+      btnSave.style.display = "inline-block";
+
+      /* textos editáveis em todos os níveis */
+      slide.querySelectorAll(".name, .dept, .rn, .acard-header, .rl, .header-title, #footer-version").forEach(function(el) {
+        el.contentEditable = "true";
+      });
+
+      /* injeta botões de excluir e adicionar */
+      injectEditButtons();
+
+    } else {
+      slide.classList.remove("editing");
+      btn.textContent = "✎ Modo Edição";
+      btn.style.borderColor = "";
+      btn.style.color = "";
+      btnSave.style.display = "none";
+
+      slide.querySelectorAll("[contenteditable]").forEach(function(el) {
+        el.removeAttribute("contenteditable");
+      });
+
+      /* remove botões injetados */
+      slide.querySelectorAll(".del-btn, .add-area-btn, .add-committee-btn").forEach(function(el) {
+        el.remove();
+      });
+    }
+  }
+
+  /* ---- injeta botoes de excluir/adicionar ---- */
+  function injectEditButtons() {
+    var slide = document.getElementById("slide");
+
+    /* excluir: hcards de hierarquia (sponsor, manager, secretary) */
+    slide.querySelectorAll(".hcard-sponsor, .hcard-manager, .hcard-secretary").forEach(function(card) {
+      if (!card.querySelector(".del-btn")) {
+        card.appendChild(makeDelBtn(function() { card.remove(); }));
+      }
+    });
+
+    /* excluir + adicionar: cards do comite */
+    var committeeRow = slide.querySelector(".committee-row");
+    if (committeeRow) {
+      committeeRow.querySelectorAll(".hcard-committee:not(.add-committee-btn)").forEach(function(card) {
+        if (!card.querySelector(".del-btn")) {
+          card.appendChild(makeDelBtn(function() { card.remove(); }));
+        }
+      });
+      if (!committeeRow.querySelector(".add-committee-btn")) {
+        var addCBtn = document.createElement("button");
+        addCBtn.className = "hcard-committee add-committee-btn";
+        addCBtn.textContent = "+";
+        addCBtn.title = "Adicionar membro ao comite";
+        addCBtn.onclick = addCommitteeCard;
+        committeeRow.appendChild(addCBtn);
+      }
+    }
+
+    /* excluir + adicionar: area cards */
+    var grid = slide.querySelector(".areas-grid");
+    if (grid) {
+      grid.querySelectorAll(".acard:not(.add-area-btn)").forEach(function(card) {
+        if (!card.querySelector(".del-btn")) {
+          card.appendChild(makeDelBtn(function() { card.remove(); }));
+        }
+      });
+      if (!grid.querySelector(".add-area-btn")) {
+        var addABtn = document.createElement("div");
+        addABtn.className = "acard add-area-btn";
+        addABtn.textContent = "+";
+        addABtn.title = "Adicionar area";
+        addABtn.onclick = addAreaCard;
+        grid.appendChild(addABtn);
+      }
+    }
+  }
+
+  /* ---- fabrica de botao excluir ---- */
+  function makeDelBtn(onClickFn) {
+    var btn = document.createElement("button");
+    btn.className = "del-btn";
+    btn.textContent = "✕";
+    btn.title = "Excluir";
+    btn.onclick = function(e) {
+      e.stopPropagation();
+      if (confirm("Excluir este card?")) { onClickFn(); }
+    };
+    return btn;
+  }
+
+  /* ---- adicionar card de area ---- */
+  function addAreaCard() {
+    var grid = document.querySelector(".areas-grid");
+    var addBtn = grid.querySelector(".add-area-btn");
+    var card = document.createElement("div");
+    card.className = "acard";
+    card.innerHTML =
+      '<div class="acard-header" contenteditable="true">Nova Área</div>' +
+      '<div class="acard-body">' +
+        '<div><div class="rl" contenteditable="true">Facilitador</div>' +
+        '<div class="rn vazio" contenteditable="true">A definir</div></div>' +
+        '<div class="ds"></div>' +
+        '<div><div class="rl" contenteditable="true">Auditor</div>' +
+        '<div class="rn vazio" contenteditable="true">A definir</div></div>' +
+      '</div>';
+    card.appendChild(makeDelBtn(function() { card.remove(); }));
+    grid.insertBefore(card, addBtn);
+  }
+
+  /* ---- adicionar card de comite ---- */
+  function addCommitteeCard() {
+    var row = document.querySelector(".committee-row");
+    var addBtn = row.querySelector(".add-committee-btn");
+    var card = document.createElement("div");
+    card.className = "hcard-committee";
+    card.innerHTML =
+      '<div class="name" contenteditable="true">Nome</div>' +
+      '<div class="dept" contenteditable="true">Área</div>';
+    card.appendChild(makeDelBtn(function() { card.remove(); }));
+    row.insertBefore(card, addBtn);
+  }
+
+  /* ---- salvar HTML atualizado ---- */
+  function salvar() {
+    if (editMode) { toggleEdit(); }
+    var slide = document.getElementById("slide");
+    var clone = slide.cloneNode(true);
+    clone.classList.remove("editing");
+    clone.style.transform = "";
+    clone.style.marginLeft = "";
+    clone.querySelectorAll("[contenteditable]").forEach(function(el) {
+      el.removeAttribute("contenteditable");
+    });
+    clone.querySelectorAll(".del-btn, .add-area-btn, .add-committee-btn").forEach(function(el) {
+      el.remove();
+    });
+    var css  = document.querySelector("style").textContent;
+    var js   = document.querySelector("script").textContent;
+    var ctrl = document.getElementById("controls").outerHTML;
+    var fullHTML =
+      "<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n<meta charset=\"UTF-8\">\n" +
+      "<title>Organograma \u2013 Melhoria Cont\u00ednua INOVA</title>\n" +
+      "<style>" + css + "</style>\n</head>\n<body>\n" +
+      ctrl + "\n<div class=\"slide-wrap\">" + clone.outerHTML + "</div>\n" +
+      "<script>" + js + "<\/script>\n</body>\n</html>";
+    var blob = new Blob([fullHTML], {type: "text/html; charset=utf-8"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "Organograma_Melhoria_Continua_INOVA.html";
+    a.click();
+  }
+</script>
+</body>
+</html>
