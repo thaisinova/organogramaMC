@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Organograma – Melhoria Contínua INOVA</title>
-  <style>
+<meta charset="UTF-8">
+<title>Organograma – Melhoria Contínua INOVA</title>
+<style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       width: 100%; height: 100%;
@@ -183,15 +184,12 @@
   </style>
 </head>
 <body>
-
 <div class="controls" id="controls">
-  <button onclick="toggleEdit()" id="btnEdit">✎ Modo Edição</button>
-  <button onclick="salvar()" id="btnSave" style="display:none">💾 Salvar Alterações</button>
+  <button onclick="toggleEdit()" id="btnEdit" style="">✎ Modo Edição</button>
+  <button onclick="salvar()" id="btnSave" style="display: none;">💾 Salvar Alterações</button>
   <button onclick="window.print()">🖨 Imprimir / PDF</button>
 </div>
-
-<div class="slide-wrap">
-<div class="slide" id="slide">
+<div class="slide-wrap"><div class="slide" id="slide" style="">
 
   <!-- HEADER -->
   <div class="header">
@@ -240,11 +238,7 @@
           <div class="name">Géverton Borges</div>
           <div class="dept">Supervisor Métodos e Proc.</div>
         </div>
-        <div class="hcard hcard-committee">
-          <div class="badge">Comitê</div>
-          <div class="name">Gabriel Birck</div>
-          <div class="dept">Planejamento Estratégico</div>
-        </div>
+        
         <div class="hcard hcard-committee">
           <div class="badge">Comitê</div>
           <div class="name">Matheus dos Santos</div>
@@ -325,7 +319,7 @@
         <div class="acard-body">
           <div><div class="rl">Facilitador</div><div class="rn">Djordan Sievers</div></div>
           <div class="ds"></div>
-          <div><div class="rl">Auditor</div><div class="rn">Aloísio V. Arrial</div></div>
+          <div><div class="rl">Auditor</div><div class="rn"><span style="color: rgb(200, 160, 0); font-size: 8.5px; font-style: italic; font-weight: 400;">Sem auditor</span></div></div>
         </div>
       </div>
 
@@ -476,12 +470,10 @@
 
   <div class="footer">
     INOVA Sistemas Eletrônicos &nbsp;|&nbsp; Melhoria Contínua &nbsp;|&nbsp; Elaboração: Thais de Castilhos &nbsp;|&nbsp;
-    <span id="footer-version">Versão 1.0 &ndash; Maio/2026</span>
+    <span id="footer-version">Versão 1.0 – Maio/2026</span>
   </div>
 
-</div><!-- /slide -->
-</div><!-- /slide-wrap -->
-
+</div></div>
 <script>
   function scaleSlide() {
     const slide = document.getElementById("slide");
